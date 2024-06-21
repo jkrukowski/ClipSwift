@@ -12,7 +12,7 @@ import MLX
 #endif
 
 extension Image {
-    public var cgImage: CGImage? {
+    public var _cgImage: CGImage? {
         #if os(macOS)
             return cgImage(forProposedRect: nil, context: nil, hints: nil)
         #else
@@ -20,36 +20,11 @@ extension Image {
         #endif
     }
 
-    public var scale: CGFloat {
+    public static func fromFile(at filePath: String) -> Image? {
         #if os(macOS)
-            return 1
+            return NSImage(contentsOfFile: filePath)
         #else
-            return scale
-        #endif
-    }
-
-    public func pngData() -> Data? {
-        #if os(macOS)
-            guard let cgImage else {
-                return nil
-            }
-            let rep = NSBitmapImageRep(cgImage: cgImage)
-            return rep.representation(using: .png, properties: [:])
-        #else
-            return pngData()
-        #endif
-    }
-
-    public func jpegData(compressionQuality: CGFloat = 1.0) -> Data? {
-        #if os(macOS)
-            guard let cgImage else {
-                return nil
-            }
-            let rep = NSBitmapImageRep(cgImage: cgImage)
-            return rep.representation(
-                using: .jpeg, properties: [.compressionFactor: compressionQuality])
-        #else
-            return jpegData(compressionQuality: compressionQuality)
+            return UIImage(contentsOfFile: filePath)
         #endif
     }
 
@@ -61,7 +36,7 @@ extension Image {
         let top = (originalSize.height - newSize.height) / 2
         let left = (originalSize.width - newSize.width) / 2
         let rect = CGRect(x: left, y: top, width: newSize.width, height: newSize.height)
-        guard let cgImage = cgImage?.cropping(to: rect) else {
+        guard let cgImage = _cgImage?.cropping(to: rect) else {
             return nil
         }
         #if os(macOS)
@@ -179,7 +154,7 @@ open class ImageProcessor {
 
 extension Image {
     public func toMLXArray() throws -> MLXArray {
-        guard let bytesPerRow = cgImage?.bytesPerRow, let provider = cgImage?.dataProvider else {
+        guard let bytesPerRow = _cgImage?.bytesPerRow, let provider = _cgImage?.dataProvider else {
             throw ClipSwiftError.imageCoversionFailed
         }
         guard let bytes = CFDataGetBytePtr(provider.data) else {

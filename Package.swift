@@ -5,7 +5,8 @@ import PackageDescription
 let package = Package(
     name: "ClipSwift",
     platforms: [
-        .macOS("13.3")
+        .macOS(.v14),
+        .iOS(.v17)
     ],
     products: [
         .library(

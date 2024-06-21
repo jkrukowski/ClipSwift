@@ -35,8 +35,8 @@ final class EmbeddingsTests: XCTestCase {
     }
 
     func testSimilarity() throws {
-        let imageUrl = try XCTUnwrap(Bundle.module.url(forResource: "dog", withExtension: "jpeg"))
-        let image = try XCTUnwrap(Image(contentsOf: imageUrl))
+        let imageUrl = try XCTUnwrap(Bundle.module.path(forResource: "dog", ofType: "jpeg"))
+        let image = try XCTUnwrap(Image.fromFile(at:imageUrl))
         let clip = try Clip(url: modelUrl)
 
         let similarity1 = try clip.similarity(
