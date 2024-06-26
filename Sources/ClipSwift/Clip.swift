@@ -336,7 +336,7 @@ open class Model: Module {
     ) -> MLXArray {
         let textEmbeddings = self(tokenIds: tokenIds)
         let imageEmbeddings = self(pixelValues: pixelValues)
-        return MLX.matmul(textEmbeddings, imageEmbeddings.T)
+        return MLXNN.cosineSimilarityLoss(x1: textEmbeddings, x2: imageEmbeddings)
     }
 }
 
